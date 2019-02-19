@@ -7,7 +7,7 @@ Enzyme.configure({ adapter: new Adapter() });
 
 const state = {
   turnData: {
-    books: ['The Shining', 'Animal Farm', '1984', 'David Copperfield', 'A Tale of Two Cities','A Brief Hstory of Time', 'Hamlet'],
+    books: ['Animal Farm', '1984', 'David Copperfield', 'A Tale of Two Cities','A Brief Hstory of Time', 'Hamlet'],
     author: {
       name: 'George Orwell',
       imageUrl: 'images/authors/GeorgeOrwell.jpg',
@@ -23,4 +23,56 @@ describe("Author Quiz", () => {
     const div = document.createElement("div");
     ReactDOM.render(<AuthorQuiz {...state} onAnswerSelected ={() => {}}/>, div);
   });
+
+  describe("When no answer has been selected", ()=>{
+    let wrapper;
+    beforeAll(()=> {
+      wrapper = mount(<AuthorQuiz {...state} onAnswerSelected ={() => {}}/>);
+    });
+
+    it("should have no background color", ()=> {
+      expect(wrapper.find("div.row.turn").props().style.backgroundColor).toBe('');
+    });
+  });
+
+  describe("When the wrong answer has been selected", ()=>{
+    let wrapper;
+    beforeAll(()=> {
+      wrapper = mount(<AuthorQuiz {...Object.assign({}, state, {highlight: 'wrong'})} onAnswerSelected ={() => {}}/>);
+    });
+
+    it("should have red background color", ()=> {
+      expect(wrapper.find("div.row.turn").props().style.backgroundColor).toBe('red');
+    });
+  });
+
+  describe("When the correct answer has been selected", ()=>{
+    let wrapper;
+    beforeAll(()=> {
+      wrapper = mount(<AuthorQuiz {...Object.assign({}, state, {highlight: 'correct'})} onAnswerSelected ={() => {}}/>);
+    });
+
+    it("should have green background color", ()=> {
+      expect(wrapper.find("div.row.turn").props().style.backgroundColor).toBe('green');
+    });
+  });
+  
+  describe("When the first answer is selected", () => {
+    let wrapper;
+    const handleAnswerSelected = jest.fn();
+    beforeAll(()=> {
+      wrapper = mount(
+        <AuthorQuiz {...state} onAnswerSelected={handleAnswerSelected} />);
+      wrapper.find('.answer').first().simulate('click');
+    });
+
+    it("onAnswerSelected should be called", ()=>{
+      expect(handleAnswerSelected).toHaveBeenCalled();
+    });
+
+    it("should receive Animal Farm", ()=>{
+      expect(handleAnswerSelected).toHaveBeenCalledWith("Animal Farm");
+    });
+  });
+
 });
