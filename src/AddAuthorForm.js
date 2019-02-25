@@ -63,7 +63,7 @@ function mapDispatchToProps(dispatch, props) {
     return {
         onAddAuthor: (autho) => {
             dispatch({ type: 'ADD_AUTHOR, author' });
-            props.history.push('/');
+            props.history.push('/'); 
         }
     };
 }
